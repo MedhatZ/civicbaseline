@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CivicBaseline
 
 Open-source **evidence engine** that turns U.S. critical-infrastructure baseline goals into **safe, repeatable checks** for small operators.
@@ -71,3 +72,7 @@ Read [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md). Default-on active discovery of cont
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+=======
+# civicbaseline
+Evidence engine that turns CISA CPGs into safe, prioritized actions for under-resourced critical infrastructure operators
+>>>>>>> 7df929b6ff2b9fb8b9793409947fcefee4ef1291

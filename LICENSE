@@ -82,8 +82,14 @@
       institute patent litigation against any entity (including a
       cross-claim or counterclaim in a lawsuit) alleging that the Work
       or a Contribution incorporated within the Work constitutes direct
+<<<<<<< HEAD
       or contributory patent infringement, You are granted this License
       for that Work shall terminate as of the date such litigation is filed.
+=======
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+>>>>>>> 7df929b6ff2b9fb8b9793409947fcefee4ef1291
 
    4. Redistribution. You may reproduce and distribute copies of the
       Work or Derivative Works thereof in any medium, with or without
@@ -185,7 +191,11 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
+<<<<<<< HEAD
    Copyright 2026 CivicBaseline contributors
+=======
+   Copyright [yyyy] [name of copyright owner]
+>>>>>>> 7df929b6ff2b9fb8b9793409947fcefee4ef1291
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
