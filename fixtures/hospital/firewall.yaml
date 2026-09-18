@@ -1,0 +1,14 @@
+rules:
+  - id: allow-it-bms
+    action: allow
+    src_zone: it
+    dst_zone: ot
+    service: any
+    enabled: true
+    notes: EHR VLAN can reach BMS
+  - id: allow-internet-bms
+    action: allow
+    src_zone: internet
+    dst_zone: ot
+    service: https
+    enabled: true

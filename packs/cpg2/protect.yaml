@@ -1,0 +1,132 @@
+rules:
+  - id: CPG2-PR-01
+    title: Remove default and shared passwords from OT and remote paths
+    function: PROTECT
+    summary: Default vendor passwords remain one of the most common OT intrusion paths.
+    nist_csf: ["PR.AA-01", "PR.AA-05"]
+    mitre_ics: ["T0891", "T0812"]
+    overlays: ["CPG 2.0 PROTECT"]
+    cost: low
+    impact: high
+    ease: high
+    ot_weight: 1.8
+    remediation:
+      - Change default passwords on PLCs, HMIs, VPNs, and radios during a planned outage.
+      - Store unique credentials in an offline password manager; do not tape them to the HMI.
+      - Confirm with the OEM that the change will not fail a watchdog or service account.
+    checks:
+      - id: asset-defaults
+        type: asset_field
+        field: default_credentials
+        expected: false
+        fail_message: Assets still use default or well-known credentials
+      - id: account-defaults
+        type: accounts_field
+        field: default_password
+        expected: false
+        fail_message: Accounts still use default passwords
+
+  - id: CPG2-PR-02
+    title: Require phishing-resistant MFA on remote access
+    function: PROTECT
+    summary: VPN, jump hosts, and vendor portals that reach OT must not rely on passwords alone.
+    nist_csf: ["PR.AA-03", "PR.AA-04"]
+    mitre_ics: ["T0886"]
+    overlays: ["CPG 2.0 PROTECT"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.6
+    remediation:
+      - Enable MFA on the VPN or identity provider that fronts the jump host.
+      - Do not place MFA prompts on the PLC itself; protect the path to OT.
+      - Phishing-resistant methods (FIDO2) are preferred when the IdP allows them.
+    checks:
+      - id: remote-mfa
+        type: asset_field
+        field: mfa_enabled
+        expected: true
+        where:
+          remote_access: true
+        unknown_if_empty: true
+        fail_message: Remote-access assets lack MFA
+
+  - id: CPG2-PR-03
+    title: Segment IT, OT, and internet; deny any-any conduits
+    function: PROTECT
+    summary: Flat networks let a ransomware desktop reach a pump PLC.
+    nist_csf: ["PR.IR-01", "PR.AA-05"]
+    mitre_ics: ["T0887", "T0842"]
+    overlays: ["CPG 2.0 PROTECT"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 2.0
+    remediation:
+      - Place a firewall or layer-3 ACL between business LAN and process LAN.
+      - Allow only historian and jump-host conduits; deny internet to OT.
+      - Test failover of the process network in a maintenance window with operations present.
+    checks:
+      - id: no-it-ot-any
+        type: segmentation
+        forbid_pairs:
+          - ["it", "ot"]
+          - ["internet", "ot"]
+          - ["any", "ot"]
+          - ["any", "any"]
+        fail_message: Enabled allow rules create an IT/OT or internet/OT conduit
+      - id: ot-not-exposed
+        type: asset_field
+        field: internet_exposed
+        expected: false
+        where:
+          zone_in: ["ot", "control", "safety"]
+        unknown_if_empty: true
+        fail_message: OT-zone assets are marked internet-exposed
+
+  - id: CPG2-PR-04
+    title: Back up OT logic and configurations offline
+    function: PROTECT
+    summary: Untestable backups are how a ransomware event becomes a multi-week outage.
+    nist_csf: ["PR.DS-11"]
+    overlays: ["CPG 2.0 PROTECT"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.7
+    remediation:
+      - Export PLC projects and HMI applications to encrypted offline media after every change.
+      - Store a copy off-site or immutable; do not keep the only copy on the engineering laptop.
+    checks:
+      - id: backups-configured
+        type: policy_true
+        field: backup.ot_backups_configured
+        fail_message: OT backups are not configured
+      - id: backups-include-logic
+        type: policy_true
+        field: backup.includes_hmi_and_plc_logic
+        fail_message: Backups do not include HMI applications and PLC logic
+
+  - id: CPG2-PR-05
+    title: Encrypt remote administration paths
+    function: PROTECT
+    summary: Telnet, unencrypted HTTP, and cleartext industrial admin paths expose credentials.
+    nist_csf: ["PR.DS-02", "PR.IR-01"]
+    mitre_ics: ["T0886"]
+    overlays: ["CPG 2.0 PROTECT"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.4
+    remediation:
+      - Replace Telnet/FTP/HTTP admin with vendor-supported TLS or a jump host over VPN.
+      - Never enable encryption by scanning the PLC; use the vendor engineering procedure.
+    checks:
+      - id: encrypted-remote
+        type: asset_field
+        field: encrypted_remote
+        expected: true
+        where:
+          remote_access: true
+        unknown_if_empty: true
+        fail_message: Remote-access assets are not marked as encrypted

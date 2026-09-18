@@ -1,0 +1,34 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "cedar-creek-hmi-stack",
+      "version": "2019.4"
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "type": "library",
+      "name": "log4j-core",
+      "version": "2.14.1",
+      "purl": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "supplier": { "name": "Apache Software Foundation" }
+    },
+    {
+      "bom-ref": "win-smb",
+      "type": "library",
+      "name": "example-hmi-runtime",
+      "version": "9.2.0"
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "id": "CVE-2021-44228",
+      "affects": [{ "ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1" }]
+    }
+  ]
+}

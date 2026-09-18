@@ -1,0 +1,6 @@
+id: healthcare
+name: Healthcare facility baseline (CPG 2.0 themes + HHS SSG themes)
+description: Cross-sector CPG-style checks plus original healthcare sector-specific goal themes.
+includes:
+  - cpg2
+  - healthcare-ssg

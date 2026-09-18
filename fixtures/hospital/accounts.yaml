@@ -1,0 +1,13 @@
+accounts:
+  - id: biomed-shared
+    name: biomed
+    role: administrator
+    shared: true
+    default_password: true
+    mfa: false
+  - id: helpdesk
+    name: helpdesk
+    role: user
+    shared: true
+    default_password: false
+    mfa: false

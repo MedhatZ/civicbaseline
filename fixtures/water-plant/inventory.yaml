@@ -1,0 +1,82 @@
+organization: Cedar Creek Water Works (synthetic)
+sector: water
+assets:
+  - id: plc-raw
+    name: Raw-water pump PLC
+    type: plc
+    zone: ot
+    purdue_level: 1
+    vendor: ExamplePLC
+    model: XP-100
+    firmware: 2.1.0
+    owner: operations
+    criticality: safety
+    default_credentials: true
+    logging_enabled: false
+    internet_exposed: false
+    protocols: ["modbus"]
+  - id: plc-chem
+    name: Chemical-feed PLC
+    type: plc
+    zone: ot
+    purdue_level: 1
+    vendor: ExamplePLC
+    firmware: 1.0.4
+    owner: operations
+    criticality: safety
+    default_credentials: true
+    protocols: ["modbus"]
+  - id: hmi-1
+    name: Operator HMI
+    type: hmi
+    zone: ot
+    purdue_level: 2
+    firmware: Win10-21H2
+    owner: operations
+    criticality: high
+    default_credentials: false
+    logging_enabled: false
+    protocols: ["http"]
+  - id: historian
+    name: Process historian
+    type: historian
+    zone: dmz
+    purdue_level: 3
+    firmware: 2019.lts
+    owner: it
+    criticality: medium
+    logging_enabled: true
+  - id: jump-1
+    name: Integrator jump host
+    type: jump_host
+    zone: it
+    purdue_level: 4
+    firmware: Win2019
+    owner: contractor
+    criticality: high
+    remote_access: true
+    mfa_enabled: false
+    encrypted_remote: false
+    logging_enabled: false
+    default_credentials: false
+    managed_by_msp: true
+  - id: fw-1
+    name: Plant firewall
+    type: firewall
+    zone: dmz
+    firmware: 9.1
+    owner: it
+    criticality: high
+    logging_enabled: false
+  - id: vpn-1
+    name: Always-on vendor VPN
+    type: vpn
+    zone: it
+    firmware: unknown
+    owner: contractor
+    criticality: high
+    remote_access: true
+    mfa_enabled: false
+    encrypted_remote: true
+    internet_exposed: true
+    default_credentials: true

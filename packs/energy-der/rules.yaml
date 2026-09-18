@@ -1,0 +1,116 @@
+rules:
+  - id: ENERGY-01
+    title: Control remote access to DER and distribution gateways
+    function: PROTECT
+    summary: Inverters, recloser controls, and DERMS gateways are grid-edge OT and need MFA plus encryption.
+    nist_csf: ["PR.AA-03", "PR.IR-01"]
+    mitre_ics: ["T0886"]
+    overlays: ["Energy distribution/DER SSG theme"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.8
+    remediation:
+      - Put DER aggregator and field-gateway admin behind a utility jump host with MFA.
+      - Disable cellular default passwords on recloser and capacitor controls.
+    checks:
+      - id: der-policy
+        type: policy_true
+        field: energy.der_remote_access_controlled
+        fail_message: DER/distribution remote access is not evidenced as controlled
+      - id: der-mfa
+        type: asset_field
+        field: mfa_enabled
+        expected: true
+        where:
+          remote_access: true
+        unknown_if_empty: true
+        fail_message: Remote-access distribution/DER assets lack MFA
+
+  - id: ENERGY-02
+    title: Apply change control to relay and IED settings
+    function: PROTECT
+    summary: Unauthorized setting changes can misoperate protection and drop feeders.
+    nist_csf: ["PR.PS-01"]
+    mitre_ics: ["T0836"]
+    overlays: ["Energy distribution/DER SSG theme"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 2.0
+    remediation:
+      - Require two-person review for protection-setting changes; keep signed setting files offline.
+    checks:
+      - id: relay-cc
+        type: policy_true
+        field: energy.relay_settings_change_control
+        fail_message: Relay/IED setting changes lack evidenced change control
+
+  - id: ENERGY-03
+    title: Segment ADMS/SCADA from corporate IT
+    function: PROTECT
+    summary: Distribution management systems should not sit on the same LAN as email.
+    nist_csf: ["PR.IR-01"]
+    overlays: ["Energy distribution/DER SSG theme"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 2.0
+    remediation:
+      - Enforce SCADA/ADMS in a control zone with historian DMZ; deny any-any from IT.
+    checks:
+      - id: scada-seg-policy
+        type: policy_true
+        field: energy.adms_or_scada_segmentation
+        fail_message: ADMS/SCADA segmentation is not evidenced as policy
+      - id: scada-seg-fw
+        type: segmentation
+        forbid_pairs:
+          - ["it", "ot"]
+          - ["internet", "ot"]
+        fail_message: Firewall allows corporate IT or internet into the control zone
+
+  - id: ENERGY-04
+    title: Track IED firmware provenance
+    function: IDENTIFY
+    summary: Grid-edge firmware should come from the OEM with an SBOM or hash, not an unsigned USB.
+    nist_csf: ["ID.SC-04"]
+    overlays: ["Energy distribution/DER SSG theme", "SBOM"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.5
+    remediation:
+      - Require vendor hashes/SBOMs for relay firmware; verify before a maintenance outage.
+    checks:
+      - id: ied-supply
+        type: policy_true
+        field: energy.supply_chain_for_ied_firmware
+        fail_message: IED firmware supply-chain controls are not evidenced
+      - id: firmware
+        type: inventory_quality
+        required_fields: ["firmware"]
+        fail_message: Distribution assets are missing firmware versions
+
+  - id: ENERGY-05
+    title: Remove default credentials on RTUs, IEDs, and gateways
+    function: PROTECT
+    summary: Field devices often ship with documented default logins.
+    nist_csf: ["PR.AA-01"]
+    mitre_ics: ["T0891"]
+    overlays: ["Energy distribution/DER SSG theme"]
+    cost: low
+    impact: high
+    ease: high
+    ot_weight: 2.0
+    remediation:
+      - Change defaults during the next feeder outage; document unique credentials in the protection group vault.
+    checks:
+      - id: ied-defaults
+        type: asset_field
+        field: default_credentials
+        expected: false
+        where:
+          type_in: ["rtu", "ied", "plc", "gateway", "recloser"]
+        unknown_if_empty: true
+        fail_message: Field controllers still use default credentials

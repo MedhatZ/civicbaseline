@@ -1,0 +1,87 @@
+rules:
+  - id: HEALTH-01
+    title: Inventory networked medical devices and building controls
+    function: IDENTIFY
+    summary: Healthcare SSG themes emphasize knowing which devices can affect care delivery.
+    nist_csf: ["ID.AM-01"]
+    overlays: ["Healthcare SSG theme"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.6
+    remediation:
+      - Merge HTM/biomed inventories with IT CMDB; include infusion, imaging, and BMS.
+      - Tag life-support adjacent devices as safety criticality.
+    checks:
+      - id: med-device-policy
+        type: policy_true
+        field: healthcare.medical_device_inventory
+        fail_message: No medical-device inventory process is evidenced
+      - id: inventory-exists
+        type: inventory_min_count
+        expected: 4
+        fail_message: Facility inventory is too small to represent clinical plus BMS assets
+
+  - id: HEALTH-02
+    title: Test electronic health record and downtime procedures
+    function: RECOVER
+    summary: Hospitals must treat EHR restore and paper downtime as a paired control.
+    nist_csf: ["RC.RP-01"]
+    overlays: ["Healthcare SSG theme", "HIPAA Security Rule theme"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.5
+    remediation:
+      - Restore a non-production EHR snapshot quarterly.
+      - Drill paper downtime with nursing once a year; keep downtime packets on each unit.
+    checks:
+      - id: ehr-backup
+        type: policy_true
+        field: healthcare.ehr_backup_tested
+        fail_message: EHR backup restore is not tested
+      - id: downtime
+        type: policy_true
+        field: healthcare.emergency_downtime_procedures
+        fail_message: Emergency downtime procedures are not evidenced
+
+  - id: HEALTH-03
+    title: Bind business associates and MSPs to security duties
+    function: GOVERN
+    summary: Billing vendors and remote EHR hosts expand the hospital threat surface.
+    nist_csf: ["GV.SC-03"]
+    overlays: ["Healthcare SSG theme", "HIPAA BA theme"]
+    cost: low
+    impact: high
+    ease: medium
+    remediation:
+      - Ensure BAAs exist and that remote support is logged the same way as internal admin.
+    checks:
+      - id: baa
+        type: policy_true
+        field: healthcare.ba_agreements
+        fail_message: Business associate agreements are not evidenced
+      - id: msp
+        type: policy_true
+        field: governance.msp_contract_security_clauses
+        fail_message: Healthcare MSP clauses are missing
+
+  - id: HEALTH-04
+    title: Isolate building management and clinical networks
+    function: PROTECT
+    summary: HVAC and badge systems should not be a ransomware bridge into EHR or pharmacy.
+    nist_csf: ["PR.IR-01"]
+    overlays: ["Healthcare SSG theme"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.4
+    remediation:
+      - Place BMS in its own VLAN; allow only jump-host or vendor-supervised access.
+    checks:
+      - id: bms-seg
+        type: segmentation
+        forbid_pairs:
+          - ["it", "ot"]
+          - ["internet", "ot"]
+        fail_message: Clinical/IT networks still have open conduits into OT/BMS

@@ -1,0 +1,41 @@
+organization: Cedar Creek Water Works (hardened synthetic)
+sector: water
+assets:
+  - id: plc-raw
+    name: Raw-water pump PLC
+    type: plc
+    zone: ot
+    firmware: 2.4.0
+    owner: operations
+    criticality: safety
+    default_credentials: false
+    logging_enabled: false
+  - id: hmi-1
+    name: Operator HMI
+    type: hmi
+    zone: ot
+    firmware: 22H2
+    owner: operations
+    criticality: high
+    logging_enabled: true
+    default_credentials: false
+  - id: jump-1
+    name: Attended jump host
+    type: jump_host
+    zone: dmz
+    firmware: 2022
+    owner: it
+    criticality: high
+    remote_access: true
+    mfa_enabled: true
+    encrypted_remote: true
+    logging_enabled: true
+    default_credentials: false
+  - id: fw-1
+    name: Plant firewall
+    type: firewall
+    zone: dmz
+    firmware: 11.0
+    owner: it
+    criticality: high
+    logging_enabled: true

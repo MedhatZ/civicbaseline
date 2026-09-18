@@ -1,0 +1,65 @@
+rules:
+  - id: CPG2-ID-01
+    title: Maintain a living inventory of IT and OT assets
+    function: IDENTIFY
+    summary: You cannot protect pumps, HMIs, and jump hosts you have not listed.
+    nist_csf: ["ID.AM-01", "ID.AM-02"]
+    mitre_ics: ["T0840"]
+    overlays: ["CPG 2.0 IDENTIFY"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.4
+    remediation:
+      - "Walk down the plant with a spreadsheet (PLC, HMI, historian, radio, firewall, engineering laptop)."
+      - Store the list where operators can update it after every vendor visit.
+      - Include zone (IT/OT/DMZ), owner, and safety criticality.
+    checks:
+      - id: min-assets
+        type: inventory_min_count
+        expected: 3
+        fail_message: Inventory has too few assets to represent a plant
+      - id: quality
+        type: inventory_quality
+        required_fields: ["zone", "owner", "criticality", "type"]
+        fail_message: Inventory rows are missing zone, owner, criticality, or type
+
+  - id: CPG2-ID-02
+    title: Record firmware and patch state for controllers and HMIs
+    function: IDENTIFY
+    summary: Firmware versions are required to judge known-exploited software risk without scanning the process network.
+    nist_csf: ["ID.AM-02", "ID.RA-01"]
+    overlays: ["CPG 2.0 IDENTIFY"]
+    cost: low
+    impact: high
+    ease: medium
+    ot_weight: 1.5
+    remediation:
+      - Copy firmware strings from the vendor HMI/engineering workstation, not from a live scan of the PLC.
+      - Track patch_status as current, lagging, or unknown until the vendor confirms.
+    checks:
+      - id: firmware-known
+        type: inventory_quality
+        required_fields: ["firmware"]
+        fail_message: Controllers or hosts are missing firmware versions
+
+  - id: CPG2-ID-03
+    title: Keep a machine-readable software bill of materials
+    function: IDENTIFY
+    summary: An SBOM lets operators correlate CISA KEV identifiers without reverse engineering devices.
+    nist_csf: ["ID.AM-02", "ID.SC-04"]
+    overlays: ["CPG 2.0 IDENTIFY", "EO 14028 SBOM"]
+    cost: medium
+    impact: high
+    ease: medium
+    remediation:
+      - Ask vendors for CycloneDX or SPDX SBOMs as a contract deliverable.
+      - Until then, export installed software from Windows HMIs and engineering workstations.
+      - Store the file next to the asset inventory; refresh after patches.
+    checks:
+      - id: sbom
+        type: sbom_present
+        fail_message: No CycloneDX or SPDX SBOM is present
+      - id: software-list
+        type: software_inventory_present
+        fail_message: No software inventory is present

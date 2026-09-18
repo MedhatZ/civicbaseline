@@ -1,0 +1,22 @@
+accounts:
+  - id: admin
+    name: admin
+    role: administrator
+    shared: true
+    default_password: true
+    mfa: false
+    asset_id: hmi-1
+  - id: vendor
+    name: integrator
+    role: vendor
+    shared: true
+    default_password: false
+    mfa: false
+    asset_id: vpn-1
+  - id: operator
+    name: shift-operator
+    role: operator
+    shared: false
+    default_password: false
+    mfa: false
+    asset_id: hmi-1

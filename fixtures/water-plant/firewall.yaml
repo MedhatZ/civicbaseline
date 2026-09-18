@@ -1,0 +1,21 @@
+rules:
+  - id: allow-office-to-ot
+    action: allow
+    src_zone: it
+    dst_zone: ot
+    service: any
+    enabled: true
+    notes: Billing PC can reach pump PLC (unsafe fixture)
+  - id: allow-internet-mgmt
+    action: allow
+    src_zone: internet
+    dst_zone: ot
+    service: https
+    enabled: true
+    notes: Vendor asked for direct HMI access
+  - id: allow-historian
+    action: allow
+    src_zone: ot
+    dst_zone: dmz
+    service: sql
+    enabled: true

@@ -1,0 +1,13 @@
+rules:
+  - id: allow-corp-scada
+    action: allow
+    src_zone: it
+    dst_zone: ot
+    service: any
+    enabled: true
+  - id: allow-der-internet
+    action: allow
+    src_zone: internet
+    dst_zone: ot
+    service: https
+    enabled: true

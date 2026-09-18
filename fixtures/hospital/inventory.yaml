@@ -1,0 +1,60 @@
+organization: Pine Ridge Community Hospital (synthetic)
+sector: healthcare
+assets:
+  - id: ehr-app
+    name: EHR application server
+    type: workstation
+    zone: it
+    firmware: 2019
+    owner: health-it
+    criticality: high
+    logging_enabled: true
+    remote_access: true
+    mfa_enabled: false
+    encrypted_remote: true
+  - id: jump-clinical
+    name: Clinical jump host
+    type: jump_host
+    zone: it
+    firmware: 2022
+    owner: health-it
+    criticality: high
+    remote_access: true
+    mfa_enabled: false
+    logging_enabled: false
+  - id: bms-plc
+    name: HVAC plant controller
+    type: plc
+    zone: ot
+    firmware: 3.4
+    owner: facilities
+    criticality: high
+    default_credentials: true
+    logging_enabled: false
+  - id: infusion
+    name: Smart pump gateway
+    type: gateway
+    zone: ot
+    firmware: 1.2
+    owner: biomed
+    criticality: safety
+    default_credentials: false
+    internet_exposed: false
+  - id: fw-hosp
+    name: Core firewall
+    type: firewall
+    zone: dmz
+    firmware: 10.0
+    owner: health-it
+    criticality: high
+    logging_enabled: true
+  - id: vpn-vendor
+    name: Imaging vendor VPN
+    type: vpn
+    zone: it
+    firmware: 5.0
+    owner: vendor
+    remote_access: true
+    mfa_enabled: false
+    managed_by_msp: true
+    criticality: high

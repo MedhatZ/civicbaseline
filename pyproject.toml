@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "civicbaseline"
+version = "0.1.0"
+description = "Open-source evidence engine that turns CISA CPG-style baselines into safe checks for small U.S. critical-infrastructure operators."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+authors = [{ name = "CivicBaseline contributors" }]
+keywords = [
+  "critical-infrastructure",
+  "ot-security",
+  "ics",
+  "cisa-cpg",
+  "water",
+  "healthcare",
+  "energy",
+  "sbom",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: System Administrators",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+]
+dependencies = [
+  "pydantic>=2.6",
+  "pyyaml>=6.0",
+  "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+civicbaseline = "civicbaseline.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/civicbaseline/civicbaseline"
+Documentation = "docs/en/niw-endeavor-brief.md"
+Acceptable-Use = "ACCEPTABLE_USE.md"
+
+[tool.setuptools.packages.find]
+include = ["civicbaseline*"]
+
+[tool.setuptools.package-data]
+civicbaseline = ["templates/*.md.j2", "templates/*.html.j2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

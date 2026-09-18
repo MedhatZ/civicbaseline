@@ -1,0 +1,59 @@
+organization: Prairie Ridge Electric Cooperative (synthetic)
+sector: energy
+assets:
+  - id: rtu-feeder
+    name: Feeder 12 RTU
+    type: rtu
+    zone: ot
+    firmware: 4.0.1
+    owner: operations
+    criticality: safety
+    default_credentials: true
+    protocols: ["dnp3"]
+  - id: ied-relay
+    name: Feeder 12 protection IED
+    type: ied
+    zone: ot
+    firmware:
+    owner: protection
+    criticality: safety
+    default_credentials: true
+    protocols: ["iec61850"]
+  - id: der-gw
+    name: Community-solar DER gateway
+    type: gateway
+    zone: ot
+    firmware: 0.9.1
+    owner: der-desk
+    criticality: high
+    remote_access: true
+    mfa_enabled: false
+    encrypted_remote: false
+    default_credentials: true
+    internet_exposed: true
+  - id: adms
+    name: ADMS server
+    type: historian
+    zone: ot
+    firmware: 2020.2
+    owner: operations
+    criticality: high
+    logging_enabled: false
+  - id: jump-scada
+    name: SCADA jump host
+    type: jump_host
+    zone: it
+    firmware: 2016
+    owner: it
+    criticality: high
+    remote_access: true
+    mfa_enabled: false
+    logging_enabled: false
+  - id: fw-sub
+    name: Substation firewall
+    type: firewall
+    zone: dmz
+    firmware: 8.0
+    owner: it
+    logging_enabled: false
+    criticality: high

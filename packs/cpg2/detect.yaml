@@ -1,0 +1,64 @@
+rules:
+  - id: CPG2-DE-01
+    title: Enable logging on jump hosts, firewalls, and HMIs
+    function: DETECT
+    summary: Without logs, a vendor session or ransomware staging on an HMI is invisible.
+    nist_csf: ["DE.CM-01", "DE.CM-03"]
+    mitre_ics: ["T0871"]
+    overlays: ["CPG 2.0 DETECT"]
+    cost: medium
+    impact: medium
+    ease: medium
+    ot_weight: 1.2
+    remediation:
+      - Turn on logging on the firewall and Windows jump host first; PLCs often cannot log densely.
+      - Forward logs to a cheap syslog or the county SOC if one exists; keep local rotation if not.
+    checks:
+      - id: logging-jump
+        type: asset_field
+        field: logging_enabled
+        expected: true
+        where:
+          type_in: ["jump_host", "firewall", "hmi", "vpn", "historian"]
+        unknown_if_empty: true
+        fail_message: Jump hosts, firewalls, or HMIs do not have logging enabled
+
+  - id: CPG2-DE-02
+    title: Review passive captures for cleartext administration (optional)
+    function: DETECT
+    summary: If the operator supplies a SPAN PCAP, flag Telnet/FTP/HTTP/Modbus-admin style ports. CivicBaseline never injects packets.
+    nist_csf: ["DE.CM-01"]
+    overlays: ["CPG 2.0 DETECT", "passive PCAP"]
+    cost: low
+    impact: medium
+    ease: medium
+    ot_weight: 1.1
+    remediation:
+      - Capture only from a mirror port during a change window agreed with operations.
+      - Replace cleartext admin paths using vendor procedures; do not "test" with active scanners.
+    checks:
+      - id: pcap-cleartext
+        type: pcap_cleartext
+        ports: [21, 23, 80]
+        fail_message: Passive capture shows cleartext remote-admin ports
+
+  - id: CPG2-DE-03
+    title: Review passive captures for IT-to-OT conversations (optional)
+    function: DETECT
+    summary: Zone labels on IP addresses make cross-zone flows visible without live discovery.
+    nist_csf: ["DE.CM-06", "PR.IR-01"]
+    overlays: ["CPG 2.0 DETECT", "passive PCAP"]
+    cost: low
+    impact: high
+    ease: medium
+    ot_weight: 1.5
+    remediation:
+      - Confirm whether the flow is a sanctioned historian path; if not, add a firewall deny.
+      - Update the zone map when addresses change.
+    checks:
+      - id: pcap-zones
+        type: pcap_cross_zone
+        forbid_pairs:
+          - ["it", "ot"]
+          - ["internet", "ot"]
+        fail_message: Passive capture shows IT or internet talking directly to OT

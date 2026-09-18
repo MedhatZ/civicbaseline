@@ -1,0 +1,8 @@
+id: water
+name: Small water and wastewater baseline (CPG 2.0 themes + EPA checklist themes)
+description: >
+  Combines cross-sector CPG-style checks with original checks mapped to EPA
+  drinking-water and wastewater cybersecurity checklist themes.
+includes:
+  - cpg2
+  - water-epa

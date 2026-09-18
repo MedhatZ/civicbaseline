@@ -1,0 +1,121 @@
+rules:
+  - id: WATER-01
+    title: List process-control assets used for treatment and distribution
+    function: IDENTIFY
+    summary: EPA checklist themes expect water systems to know which cyber assets touch treatment.
+    nist_csf: ["ID.AM-01"]
+    overlays: ["EPA water checklist theme"]
+    cost: low
+    impact: high
+    ease: high
+    ot_weight: 1.8
+    remediation:
+      - Include chemical feed, high-service pumps, SCADA radios, and the operator HMI.
+      - Mark safety-critical assets that could affect disinfectant residual or pressure.
+    checks:
+      - id: has-ot
+        type: inventory_min_count
+        expected: 3
+        fail_message: Water plant inventory is too thin to represent treatment/distribution
+
+  - id: WATER-02
+    title: Eliminate default passwords on SCADA, radios, and PLCs
+    function: PROTECT
+    summary: Public water-sector guidance consistently flags default credentials as a high-priority practice.
+    nist_csf: ["PR.AA-01"]
+    mitre_ics: ["T0891"]
+    overlays: ["EPA water checklist theme"]
+    cost: low
+    impact: high
+    ease: high
+    ot_weight: 2.0
+    remediation:
+      - Change OEM defaults on radios and RTUs during a planned pump-off window.
+      - Coordinate with the integrator so service accounts do not lock the HMI at shift change.
+    checks:
+      - id: ot-defaults
+        type: asset_field
+        field: default_credentials
+        expected: false
+        where:
+          zone_in: ["ot", "control"]
+        unknown_if_empty: true
+        fail_message: OT-zone water assets still use default credentials
+
+  - id: WATER-03
+    title: Back up PLC logic that drives chemical feed and pumps
+    function: PROTECT
+    summary: Losing ladder logic after ransomware or a failed update can halt treatment.
+    nist_csf: ["PR.DS-11"]
+    overlays: ["EPA water checklist theme"]
+    cost: low
+    impact: high
+    ease: medium
+    ot_weight: 2.0
+    remediation:
+      - Export projects from the engineering workstation after every integrator change.
+      - Keep a paper copy of setpoints (chlorine residual, high-service pressure) for manual operation.
+    checks:
+      - id: logic-backup
+        type: policy_true
+        field: backup.includes_hmi_and_plc_logic
+        fail_message: PLC/HMI logic for treatment is not in the backup set
+
+  - id: WATER-04
+    title: Separate business PCs from the process network
+    function: PROTECT
+    summary: Billing workstations should not speak directly to pump PLCs.
+    nist_csf: ["PR.IR-01"]
+    overlays: ["EPA water checklist theme"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 2.0
+    remediation:
+      - Use a dedicated operator workstation on the OT LAN; block the front-office VLAN.
+    checks:
+      - id: water-seg
+        type: segmentation
+        forbid_pairs:
+          - ["it", "ot"]
+          - ["internet", "ot"]
+        fail_message: Water plant firewall still allows IT or internet into OT
+
+  - id: WATER-05
+    title: Know whom to call at the primacy agency and CISA
+    function: RESPOND
+    summary: Water incidents may require state drinking-water program notification in addition to IT response.
+    nist_csf: ["RS.CO-02"]
+    overlays: ["EPA water checklist theme"]
+    cost: low
+    impact: high
+    ease: high
+    remediation:
+      - Add the state water primacy 24/7 number and CISA Central to the incident contact card.
+    checks:
+      - id: regulator-comms
+        type: policy_true
+        field: incident.communicates_to_regulators
+        fail_message: No evidenced path to notify water regulators during a cyber incident
+
+  - id: WATER-06
+    title: Protect vendor remote support into the plant
+    function: PROTECT
+    summary: Integrators often leave persistent connections into small water SCADA systems.
+    nist_csf: ["PR.AA-03"]
+    overlays: ["EPA water checklist theme"]
+    cost: low
+    impact: high
+    ease: medium
+    ot_weight: 1.7
+    remediation:
+      - Switch vendor access to an attended jump host with MFA; disable always-on modems.
+    checks:
+      - id: water-mfa
+        type: asset_field
+        field: mfa_enabled
+        expected: true
+        where:
+          remote_access: true
+        unknown_if_empty: true
+        fail_message: Remote access into the water plant lacks MFA

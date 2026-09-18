@@ -1,0 +1,66 @@
+# CivicBaseline assessment
+
+**Operator:** {{ result.organization }}  
+**Sector:** {{ result.sector }}  
+**Pack:** {{ result.pack_name }} (`{{ result.pack_id }}`)  
+**Generated:** {{ now }}  
+**Baseline score:** **{{ result.score }}** / 100 (OT-weighted)
+
+| Pass | Fail | Unknown | N/A |
+| ---: | ---: | ---: | ---: |
+| {{ result.passed }} | {{ result.failed }} | {{ result.unknown }} | {{ result.not_applicable }} |
+
+> CivicBaseline is a **gap assistant**, not a CISA product and not a NERC CIP, HIPAA, or IEC 62443 certification. Do not scan live PLCs to create evidence.
+
+## What leadership needs to know
+
+{% set ns = namespace(failed=0) %}
+{% for item in result.rules if item.status.value == "fail" %}
+{% if ns.failed == 0 %}The highest-priority gaps (impact × ease × OT criticality):
+
+{% endif %}
+{% if ns.failed < 8 %}
+{{ ns.failed + 1 }}. **{{ item.rule.title }}** (`{{ item.rule.id }}`) — impact {{ item.rule.impact.value }}, ease {{ item.rule.ease.value }}, priority {{ item.priority }}
+{% endif %}
+{% set ns.failed = ns.failed + 1 %}
+{% endfor %}
+{% if ns.failed == 0 %}
+No failed baseline checks in this evidence set. Review unknown items before treating the score as complete.
+{% endif %}
+
+## Engineer hardening checklist
+
+Work in a maintenance window. Back up logic and configurations first. Coordinate with the process engineer.
+
+{% for item in result.rules if item.status.value == "fail" %}
+### {{ item.rule.id }} — {{ item.rule.title }}
+
+- NIST CSF 2.0: {{ item.rule.nist_csf | join(", ") or "—" }}
+- ATT&CK for ICS (mapping only): {{ item.rule.mitre_ics | join(", ") or "—" }}
+- Cost / impact / ease: {{ item.rule.cost.value }} / {{ item.rule.impact.value }} / {{ item.rule.ease.value }}
+
+{% for check in item.checks if check.status.value == "fail" %}
+- Finding: {{ check.message }}
+{% endfor %}
+
+Safe next steps:
+
+{% for step in item.rule.remediation %}
+- {{ step }}
+{% endfor %}
+
+{% endfor %}
+
+## Framework crosswalk
+
+| ID | Title | Function | Status | NIST CSF 2.0 | Overlays |
+| --- | --- | --- | --- | --- | --- |
+{% for item in result.rules %}
+| {{ item.rule.id }} | {{ item.rule.title }} | {{ item.rule.function }} | {{ item.status.value }} | {{ item.rule.nist_csf | join(", ") }} | {{ item.rule.overlays | join(", ") }} |
+{% endfor %}
+
+## Notes
+
+{% for note in result.generated_notes %}
+- {{ note }}
+{% endfor %}

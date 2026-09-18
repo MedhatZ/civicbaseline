@@ -1,0 +1,6 @@
+id: energy
+name: Electric distribution and DER baseline (CPG 2.0 + energy SSG themes)
+description: Cross-sector CPG-style checks plus original distribution/DER sector-specific goal themes.
+includes:
+  - cpg2
+  - energy-der

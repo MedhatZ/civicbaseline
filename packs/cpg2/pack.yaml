@@ -1,0 +1,7 @@
+id: cpg2
+name: CISA CPG 2.0 theme pack (original CivicBaseline checks)
+description: >
+  Machine-readable checks aligned to public CISA Cross-Sector Cybersecurity
+  Performance Goals 2.0 themes (NIST CSF 2.0 functions). Not official CISA text.
+includes:
+  - cpg2

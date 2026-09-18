@@ -1,0 +1,20 @@
+backup:
+  ot_backups_configured: true
+  ot_backups_tested: true
+  offline_or_immutable: true
+  includes_hmi_and_plc_logic: true
+incident:
+  plan_exists: true
+  contacts_current: true
+  communicates_to_regulators: true
+  tabletop_in_last_year: true
+  ransomware_playbook: true
+governance:
+  cyber_role_assigned: true
+  board_or_council_briefed: true
+  msp_contract_security_clauses: true
+  vendor_remote_access_logged: true
+  least_privilege_review: true
+  security_training: true
+healthcare: {}
+energy: {}

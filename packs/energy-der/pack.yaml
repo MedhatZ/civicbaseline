@@ -1,0 +1,4 @@
+id: energy-der
+name: Energy distribution / DER overlay
+description: Original checks aligned to public CISA energy distribution and DER sector-specific goal themes.
+includes: []

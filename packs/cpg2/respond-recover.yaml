@@ -1,0 +1,86 @@
+rules:
+  - id: CPG2-RS-01
+    title: Keep a current incident response plan and contacts
+    function: RESPOND
+    summary: Small operators need a one-call list more than a 90-page plan.
+    nist_csf: ["RS.MA-01", "RS.CO-02"]
+    overlays: ["CPG 2.0 RESPOND", "incident communication"]
+    cost: low
+    impact: high
+    ease: high
+    remediation:
+      - "Write a two-page plan covering who isolates the VPN, who calls the county emergency manager, and who talks to the state primacy agency."
+      - Put after-hours numbers on the control-room wall and in the superintendent's phone.
+    checks:
+      - id: plan-exists
+        type: policy_true
+        field: incident.plan_exists
+        fail_message: No incident response plan is evidenced
+      - id: contacts
+        type: policy_true
+        field: incident.contacts_current
+        fail_message: Incident contacts are missing or stale
+
+  - id: CPG2-RS-02
+    title: Practice the plan and include ransomware
+    function: RESPOND
+    summary: Tabletop exercises find missing phone numbers before an incident does.
+    nist_csf: ["RS.MA-01", "GV.PO-02"]
+    overlays: ["CPG 2.0 RESPOND"]
+    cost: low
+    impact: medium
+    ease: high
+    remediation:
+      - Run a 60-minute tabletop once a year with operations, IT, and the mayor or board chair.
+      - Include a ransomware scenario that encrypts the HMI, not only the business email.
+    checks:
+      - id: tabletop
+        type: policy_true
+        field: incident.tabletop_in_last_year
+        fail_message: No tabletop in the last year
+      - id: ransomware
+        type: policy_true
+        field: incident.ransomware_playbook
+        fail_message: No ransomware playbook
+
+  - id: CPG2-RC-01
+    title: Test restores of OT backups
+    function: RECOVER
+    summary: A backup that has never been restored is a hope, not a control.
+    nist_csf: ["RC.RP-01", "PR.DS-11"]
+    overlays: ["CPG 2.0 RECOVER"]
+    cost: medium
+    impact: high
+    ease: medium
+    ot_weight: 1.6
+    remediation:
+      - Restore an HMI project onto a spare workstation in the shop, not onto the live process.
+      - Record the time to restore; aim for a documented RTO operations will accept.
+      - Prefer offline or immutable copies so ransomware cannot encrypt the backup.
+    checks:
+      - id: tested
+        type: policy_true
+        field: backup.ot_backups_tested
+        fail_message: OT backups have not been restore-tested
+      - id: immutable
+        type: policy_true
+        field: backup.offline_or_immutable
+        fail_message: Backups are not offline or immutable
+
+  - id: CPG2-RC-02
+    title: Prioritize known-exploited software on the inventory
+    function: RECOVER
+    summary: Correlate SBOM CVE identifiers with the CISA KEV catalog. CivicBaseline never includes exploit details.
+    nist_csf: ["ID.RA-01", "RS.AN-03"]
+    overlays: ["CPG 2.0", "CISA KEV"]
+    cost: low
+    impact: high
+    ease: medium
+    ot_weight: 1.4
+    remediation:
+      - If a KEV identifier appears, call the OEM for a supported patch or compensating segmentation.
+      - Apply patches in a maintenance window; never prove exploitability on a live controller.
+    checks:
+      - id: kev
+        type: kev_match
+        fail_message: SBOM CVE identifiers match the CISA Known Exploited Vulnerabilities catalog

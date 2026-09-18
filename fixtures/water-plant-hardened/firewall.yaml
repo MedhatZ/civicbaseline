@@ -1,0 +1,13 @@
+rules:
+  - id: allow-jump-to-ot
+    action: allow
+    src_zone: dmz
+    dst_zone: ot
+    service: https
+    enabled: true
+  - id: deny-it-ot
+    action: deny
+    src_zone: it
+    dst_zone: ot
+    service: any
+    enabled: true

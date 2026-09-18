@@ -1,0 +1,20 @@
+backup:
+  ot_backups_configured: false
+  ot_backups_tested: false
+  offline_or_immutable: false
+  includes_hmi_and_plc_logic: false
+incident:
+  plan_exists: false
+  contacts_current: false
+  communicates_to_regulators: false
+  tabletop_in_last_year: false
+  ransomware_playbook: false
+governance:
+  cyber_role_assigned: false
+  board_or_council_briefed: false
+  msp_contract_security_clauses: false
+  vendor_remote_access_logged: false
+  least_privilege_review: false
+  security_training: false
+healthcare: {}
+energy: {}

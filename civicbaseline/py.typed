@@ -1,0 +1,3 @@
+# Evidence parsers
+
+CivicBaseline only reads files. There is no network client except the optional `--fetch-kev` download of CISA's public JSON catalog of CVE *identifiers*.

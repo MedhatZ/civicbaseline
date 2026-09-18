@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CivicBaseline — {{ result.organization }}</title>
+  <style>
+    :root { color-scheme: light dark; --bg: #0f1419; --card: #1a2330; --ink: #e8eef5; --muted: #9aa8b8; --fail: #e35d6a; --pass: #3dbe7a; --unk: #d0a54b; --accent: #4ea1d3; }
+    body { font-family: "Segoe UI", system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    main { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    h1, h2 { font-weight: 600; }
+    .muted { color: var(--muted); }
+    .score { font-size: 3rem; color: var(--accent); margin: 0; }
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin: 1.5rem 0; }
+    .card { background: var(--card); padding: 1rem; border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.45rem 0.4rem; border-bottom: 1px solid #2a3544; }
+    .fail { color: var(--fail); }
+    .pass { color: var(--pass); }
+    .unknown, .not_applicable { color: var(--unk); }
+    .banner { background: #2a2118; border: 1px solid #6b542e; padding: 0.8rem 1rem; border-radius: 8px; }
+    ol.priority li { margin: 0.4rem 0; }
+  </style>
+</head>
+<body>
+<main>
+  <p class="muted">CivicBaseline defensive assessment · {{ now }}</p>
+  <h1>{{ result.organization }}</h1>
+  <p class="muted">{{ result.pack_name }} · {{ result.sector }}</p>
+  <p class="score">{{ result.score }}</p>
+  <p class="muted">OT-weighted baseline score / 100</p>
+  <div class="cards">
+    <div class="card">Pass<br><strong>{{ result.passed }}</strong></div>
+    <div class="card">Fail<br><strong class="fail">{{ result.failed }}</strong></div>
+    <div class="card">Unknown<br><strong>{{ result.unknown }}</strong></div>
+    <div class="card">N/A<br><strong>{{ result.not_applicable }}</strong></div>
+  </div>
+  <p class="banner">Gap assistant only. Not a CISA product and not a regulatory certification. Do not scan live PLCs to create evidence.</p>
+  <h2>Leadership priorities</h2>
+  <ol class="priority">
+    {% for item in result.rules if item.status.value == "fail" %}
+      {% if loop.index <= 8 %}
+      <li><strong>{{ item.rule.title }}</strong> <span class="muted">({{ item.rule.id }} · priority {{ item.priority }})</span></li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+  <h2>Failed checks</h2>
+  {% for item in result.rules if item.status.value == "fail" %}
+    <h3 class="fail">{{ item.rule.id }} — {{ item.rule.title }}</h3>
+    <p class="muted">NIST CSF 2.0: {{ item.rule.nist_csf | join(", ") or "—" }} · cost {{ item.rule.cost.value }} · impact {{ item.rule.impact.value }} · ease {{ item.rule.ease.value }}</p>
+    <ul>
+      {% for check in item.checks if check.status.value == "fail" %}
+      <li>{{ check.message }}</li>
+      {% endfor %}
+    </ul>
+    <p><strong>Safe next steps</strong></p>
+    <ul>
+      {% for step in item.rule.remediation %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+  <h2>Crosswalk</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Title</th><th>Function</th><th>Status</th><th>NIST CSF</th></tr></thead>
+    <tbody>
+    {% for item in result.rules %}
+      <tr>
+        <td>{{ item.rule.id }}</td>
+        <td>{{ item.rule.title }}</td>
+        <td>{{ item.rule.function }}</td>
+        <td class="{{ item.status.value }}">{{ item.status.value }}</td>
+        <td>{{ item.rule.nist_csf | join(", ") }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

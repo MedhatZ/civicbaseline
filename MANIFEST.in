@@ -1,0 +1,4 @@
+recursive-include civicbaseline/templates *.j2
+recursive-include packs *.yaml README.md
+recursive-include data *.json
+include LICENSE NOTICE README.md ACCEPTABLE_USE.md

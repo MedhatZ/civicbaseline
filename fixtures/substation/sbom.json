@@ -1,0 +1,16 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "prairie-ridge-adms",
+  "packages": [
+    {
+      "name": "adms-core",
+      "SPDXID": "SPDXRef-adms",
+      "versionInfo": "2020.2",
+      "externalRefs": [
+        { "referenceType": "purl", "referenceLocator": "pkg:generic/adms-core@2020.2" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+CivicBaseline
+Copyright 2026 CivicBaseline contributors
+
+This product is licensed under the Apache License, Version 2.0.
+
+CivicBaseline is an independent open-source project. It is not a product of
+the U.S. Cybersecurity and Infrastructure Security Agency (CISA), the
+Environmental Protection Agency (EPA), the Department of Health and Human
+Services (HHS), the National Institute of Standards and Technology (NIST),
+or the North American Electric Reliability Corporation (NERC).
+
+References to CPG 2.0, NIST CSF 2.0, EPA water cybersecurity guidance,
+HHS healthcare cybersecurity performance goals, NERC CIP, IEC 62443, and
+related public frameworks describe alignment of original check language
+only. Those names and marks remain the property of their respective owners.
+
+Third-party feeds (for example the CISA Known Exploited Vulnerabilities
+catalog) remain subject to their own terms when fetched by the user.

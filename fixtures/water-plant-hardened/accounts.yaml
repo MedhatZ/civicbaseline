@@ -1,0 +1,7 @@
+accounts:
+  - id: jdoe
+    name: jane.doe
+    role: operator
+    shared: false
+    default_password: false
+    mfa: true

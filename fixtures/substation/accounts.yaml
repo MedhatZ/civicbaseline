@@ -1,0 +1,13 @@
+accounts:
+  - id: scada-admin
+    name: scada
+    role: administrator
+    shared: true
+    default_password: true
+    mfa: false
+  - id: der-vendor
+    name: der-oem
+    role: vendor
+    shared: true
+    default_password: false
+    mfa: false
