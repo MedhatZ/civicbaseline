@@ -1,104 +1,74 @@
 # CivicBaseline
 
+Evidence engine that turns CISA CPG 2.0 into safe, prioritized actions for under-resourced water, healthcare, and energy operators.
+
 [![CI](https://github.com/MedhatZ/civicbaseline/actions/workflows/ci.yml/badge.svg)](https://github.com/MedhatZ/civicbaseline/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](pyproject.toml)
 
-Evidence engine that turns CISA CPGs into **safe, prioritized actions** for under-resourced U.S. critical-infrastructure operators.
+> **Defensive only.** No active scanning of PLCs/RTUs/IEDs. No exploitation. No protocol fuzzing. Evidence you already own.
 
-CivicBaseline reads files you already have — asset inventories, firewall exports, account lists, SBOMs, and optional **passive** PCAP captures — and reports baseline gaps. It does **not** scan PLCs, inject industrial protocols, or ship exploits.
+![Sample report: Cedar Creek Water Works scores 12.1 / 100 with 21 failed checks](docs/en/sample-water-report.png)
 
-> Independent open-source project. Not a CISA, EPA, HHS, or NIST product. Checks use **original language** aligned to public [CISA CPG 2.0](https://www.cisa.gov/cross-sector-cybersecurity-performance-goals) themes. Scores are a gap assistant, not a certification.
+## Why
 
-## Why it exists
+- 90% of US water systems serve fewer than 10,000 people
+- CISA CPG 2.0 says *what* to do — not *how to prove it*
+- Commercial OT platforms cost more than these utilities' entire IT budget
+- CSET is manual, Windows-first, interview-based
 
-CISA’s Cross-Sector Cybersecurity Performance Goals are a national baseline, not a vendor product. CISA has also said **small organizations struggle to turn those goals into concrete action**. Most U.S. community water systems, many rural hospitals, and many distribution cooperatives cannot buy an OT detection platform.
+CivicBaseline fills the gap: **automated evidence → gaps → safe hardening steps**.
 
-CivicBaseline is Apache-2.0 public infrastructure for that gap: repeatable evidence checks, sector overlays (water, healthcare, energy), and reports a superintendent or plant operator can act on.
+## Features
 
-## Quick start
+- Reads operator-owned evidence: inventory, firewall configs, SBOM (CycloneDX/SPDX), optional passive PCAP
+- Maps findings to CISA CPG 2.0 + NIST CSF 2.0 + EPA / HHS / Energy SSG **themes**
+- OT-aware scoring (availability and safety over confidentiality)
+- Outputs: board report, engineer checklist, SARIF, crosswalk table
 
-Requires Python 3.11+.
+## Install
 
 ```bash
-git clone https://github.com/MedhatZ/civicbaseline.git
-cd civicbaseline
-python -m pip install -e ".[dev]"
-python -m pytest
+pip install -e ".[dev]"
+pytest
+```
+
+## Usage
+
+```bash
 civicbaseline assess --pack water --evidence fixtures/water-plant --out reports/water
 ```
 
-Open `reports/water/report.html` or `report.md`. The Cedar Creek fixture is **synthetic and intentionally weak** so the report shows prioritized gaps.
+Open `reports/water/report.html`.
 
-Other packs:
+- **Before:** 12.1 / 100, 21 gaps (`fixtures/water-plant`)
+- **After applying the checklist:** 100 / 100 (`fixtures/water-plant-hardened`)
+
+```bash
+civicbaseline assess --pack water --evidence fixtures/water-plant-hardened --out reports/water-hardened
+```
+
+## Packs
+
+| Pack | Coverage |
+| --- | --- |
+| `water` | CPG 2.0 + EPA checklist themes |
+| `healthcare` | CPG 2.0 + HHS SSG themes |
+| `energy` | CPG 2.0 + Energy Distribution / DER SSG themes |
 
 ```bash
 civicbaseline assess --pack healthcare --evidence fixtures/hospital --out reports/hospital
 civicbaseline assess --pack energy --evidence fixtures/substation --out reports/energy
-civicbaseline packs
 ```
 
-Optional: correlate SBOM CVE **identifiers** with the CISA Known Exploited Vulnerabilities catalog (no exploit details):
+## Contributing
 
-```bash
-civicbaseline assess --pack water --evidence fixtures/water-plant --fetch-kev
-# or a vendored JSON:
-civicbaseline assess --pack water --evidence fixtures/water-plant --kev data/kev-sample.json
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and pilot feedback welcome.
 
-## What you feed it
-
-Place YAML/JSON in an evidence directory (see `fixtures/water-plant/`):
-
-| File | Purpose |
-| --- | --- |
-| `inventory.yaml` | Assets, zones, firmware, MFA, default-password flags |
-| `firewall.yaml` | Zone-to-zone allow/deny (no live probing) |
-| `accounts.yaml` | Shared/default/MFA account evidence |
-| `policies.yaml` | Backups, IR, governance, sector overlays |
-| `zones.yaml` | Optional IP-to-zone map for passive PCAP |
-| `sbom.json` | CycloneDX or SPDX JSON |
-| `traffic.pcap` | Optional SPAN/mirror capture, read-only |
-
-Schema notes: [`docs/en/evidence-schema.md`](docs/en/evidence-schema.md)
-
-## Packs
-
-| Pack | Contents |
-| --- | --- |
-| `cpg2` | Original checks mapped to CPG 2.0 / NIST CSF 2.0 functions |
-| `water` | `cpg2` + EPA water/wastewater checklist **themes** |
-| `healthcare` | `cpg2` + HHS/CISA healthcare SSG **themes** |
-| `energy` | `cpg2` + energy distribution/DER SSG **themes** |
-
-## Safety
-
-Read [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md) before running against real operator data.
-
-- No default-on discovery of PLCs, RTUs, or IEDs
-- No exploit payloads or proof-of-concept attacks
-- Passive PCAP only if you already captured it under change control
-- Remediation text assumes a maintenance window, a backup, and a vendor procedure
-
-## Documentation
-
-| Doc | What it is |
-| --- | --- |
-| [`docs/README.md`](docs/README.md) | Index |
-| [`docs/ar/01-market-and-national-interest.md`](docs/ar/01-market-and-national-interest.md) | Arabic professional analysis |
-| [`docs/en/niw-endeavor-brief.md`](docs/en/niw-endeavor-brief.md) | English endeavor brief (not legal advice) |
-| [`docs/en/competitive-landscape.md`](docs/en/competitive-landscape.md) | How this differs from CSET / commercial OT tools |
-| [`docs/en/sample-water-report.md`](docs/en/sample-water-report.md) | Sample report from the synthetic water plant |
-
-## Project files
-
-- [LICENSE](LICENSE) — Apache License 2.0
-- [SECURITY.md](SECURITY.md) — how to report flaws in *this* tool
-- [CONTRIBUTING.md](CONTRIBUTING.md) — defensive contributions only
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- [NOTICE](NOTICE) — trademarks and framework alignment
+Defensive contributions only. Read [ACCEPTABLE_USE.md](ACCEPTABLE_USE.md) and [SECURITY.md](SECURITY.md).
 
 ## License
 
-Copyright 2026 CivicBaseline contributors.
+Apache-2.0. See [LICENSE](LICENSE).
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
+Not a CISA, EPA, HHS, or NIST product. Independent open-source gap assistant — not a regulatory certification.
